@@ -14,11 +14,11 @@ func TestCorrMatrix(t *testing.T) {
 		1, 2, 1, 2,
 	})
 
-	exp := mat.NewSymDense(4, []float64{
+	exp := mat.NewDense(4, 4, []float64{
 		1, 1, 0.4999999999999999, -0.4999999999999999,
-		0, 1, 0.5000000000000001, -0.5000000000000001,
-		0, 0, 1, 0.5000000000000001,
-		0, 0, 0, 1,
+		1, 1, 0.5000000000000001, -0.5000000000000001,
+		0.4999999999999999, 0.5000000000000001, 1, 0.5000000000000001,
+		-0.4999999999999999, -0.5000000000000001, 0.5000000000000001, 1,
 	})
 
 	res := CorrMartix(data)
@@ -35,11 +35,11 @@ func TestCovMatrix(t *testing.T) {
 		1, 2, 1, 2,
 	})
 
-	exp := mat.NewSymDense(4, []float64{
+	exp := mat.NewDense(4, 4, []float64{
 		5.333333333333334, 2.666666666666667, 1.3333333333333333, -1.3333333333333333,
-		0, 1.3333333333333333, 0.6666666666666667, -0.6666666666666667,
-		0, 0, 1.3333333333333333, 0.6666666666666667,
-		0, 0, 0, 1.3333333333333333,
+		2.666666666666667, 1.3333333333333333, 0.6666666666666667, -0.6666666666666667,
+		1.3333333333333333, 0.6666666666666667, 1.3333333333333333, 0.6666666666666667,
+		-1.3333333333333333, -0.6666666666666667, 0.6666666666666667, 1.3333333333333333,
 	})
 
 	res := CovMartix(data)
@@ -58,10 +58,18 @@ func TestCov2Corr(t *testing.T) {
 
 	cov := CovMartix(data)
 	expCorr := CorrMartix(data)
+	expCorr.Apply(func(i, j int, v float64) float64 {
+		return roundToPlace(v, 15)
+	}, expCorr)
+
 	corr, err := Cov2Corr(cov)
 	if err != nil {
 		t.Error(err)
 	}
+
+	corr.Apply(func(i, j int, v float64) float64 {
+		return roundToPlace(v, 15)
+	}, corr)
 
 	if !reflect.DeepEqual(expCorr, corr) {
 		t.Errorf("expected %+v but got %+v", expCorr, corr)
