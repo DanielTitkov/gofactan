@@ -76,6 +76,30 @@ func TestCov2Corr(t *testing.T) {
 	}
 }
 
+func TestPatialCorr(t *testing.T) {
+	data := mat.NewDense(4, 3, []float64{ // TODO: add more data
+		12, 14, 15,
+		24, 12, 52,
+		35, 12, 41,
+		23, 12, 42,
+	})
+
+	exp := mat.NewDense(3, 3, []float64{
+		1.0, -0.730955, -0.50616,
+		-0.730955, 1.0, -0.928701,
+		-0.50616, -0.928701, 1.0,
+	})
+
+	res, err := PartialCorr(data)
+	if err != nil {
+		t.Error(err)
+	}
+
+	if !reflect.DeepEqual(exp, res) {
+		t.Errorf("expected %+v but got %+v", exp, res)
+	}
+}
+
 func TestFloatSlice(t *testing.T) {
 	exp := []float64{5, 5, 5, 5}
 	res := floatSlice(4, 5)

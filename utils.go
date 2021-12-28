@@ -49,6 +49,11 @@ func Cov2Corr(x mat.Matrix) (*mat.Dense, error) {
 	return res, nil
 }
 
+func PartialCorr(x mat.Matrix) (*mat.Dense, error) {
+
+	return nil, nil
+}
+
 func floatSlice(n int, v float64) []float64 {
 	var res []float64
 	for i := 0; i < n; i++ {
