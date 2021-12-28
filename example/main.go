@@ -2,7 +2,6 @@ package main
 
 import (
 	"fmt"
-	"reflect"
 
 	fa "github.com/DanielTitkov/gofactan"
 	"gonum.org/v1/gonum/mat"
@@ -10,22 +9,26 @@ import (
 
 func main() {
 	fmt.Println("Run examples")
-	data := mat.NewDense(3, 4, []float64{ // TODO: add more data
-		1, 2, 3, 4,
-		5, 4, 3, 2,
-		1, 2, 1, 2,
+	data := mat.NewDense(4, 3, []float64{ // TODO: add more data
+		12, 14, 15,
+		24, 12, 52,
+		35, 12, 41,
+		23, 12, 42,
 	})
 
-	cov := fa.CovMartix(data)
-	expCorr := fa.CorrMartix(data)
-	fmt.Println("cov", cov)
-	fmt.Println("exp corr", expCorr)
-	corr, err := fa.Cov2Corr(cov)
-	if err != nil {
-		fmt.Println(err)
-	}
+	// exp := mat.NewDense(3, 3, []float64{
+	// 	1.0, -0.730955, -0.50616,
+	// 	-0.730955, 1.0, -0.928701,
+	// 	-0.50616, -0.928701, 1.0,
+	// })
 
-	if !reflect.DeepEqual(expCorr, corr) {
-		fmt.Printf("expected %+v but got %+v", expCorr, corr)
-	}
+	res, err := fa.PartialCorr(data)
+	fmt.Println(res, err)
+	// if err != nil {
+	// 	t.Error(err)
+	// }
+
+	// if !reflect.DeepEqual(exp, res) {
+	// 	t.Errorf("expected %+v but got %+v", exp, res)
+	// }
 }

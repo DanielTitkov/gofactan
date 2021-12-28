@@ -50,8 +50,33 @@ func Cov2Corr(x mat.Matrix) (*mat.Dense, error) {
 }
 
 func PartialCorr(x mat.Matrix) (*mat.Dense, error) {
+	rows, cols := x.Dims()
 
-	return nil, nil
+	xCov := CovMartix(x)
+
+	empty := mat.NewDense(cols, rows, nil)
+	icvx := &mat.Dense{}
+
+	if cols > rows {
+		icvx = empty
+	} else {
+		icvx.Inverse(xCov)
+	}
+
+	icvxRows, icvxCols := icvx.Dims()
+	ones := mat.NewDense(icvxRows, icvxCols, nil)
+	fill(ones, -1)
+
+	pCorr := &mat.Dense{}
+	corr, err := Cov2Corr(icvx)
+	if err != nil {
+		return nil, err
+	}
+	pCorr.MulElem(ones, corr)
+
+	fillDiag(pCorr, 1.0)
+
+	return pCorr, nil
 }
 
 func floatSlice(n int, v float64) []float64 {
@@ -107,6 +132,15 @@ func fillDiag(m mat.Mutable, value float64) {
 			if i == j {
 				m.Set(i, j, value)
 			}
+		}
+	}
+}
+
+func fill(m mat.Mutable, value float64) {
+	r, c := m.Dims()
+	for i := 0; i < r; i++ {
+		for j := 0; j < c; j++ {
+			m.Set(i, j, value)
 		}
 	}
 }

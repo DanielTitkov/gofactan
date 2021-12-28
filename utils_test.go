@@ -95,6 +95,10 @@ func TestPatialCorr(t *testing.T) {
 		t.Error(err)
 	}
 
+	res.Apply(func(i, j int, v float64) float64 {
+		return roundToPlace(v, 6)
+	}, res)
+
 	if !reflect.DeepEqual(exp, res) {
 		t.Errorf("expected %+v but got %+v", exp, res)
 	}
