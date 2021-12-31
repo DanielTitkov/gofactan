@@ -16,7 +16,7 @@ func main() {
 	// 	23, 12, 42,
 	// })
 
-	m, err := gofactan.CSVToMatrix("test/data/test02.csv", true)
+	m, err := gofactan.CSVToMatrix("test/data/test01.csv", true)
 	if err != nil {
 		log.Fatalln(err)
 	}
@@ -27,7 +27,7 @@ func main() {
 	// 	0.839272}
 	// expectedTotal := 0.81498469767761361
 
-	kmoItems, kmoTotal, err := gofactan.CalculateKMO(m)
+	s, p := gofactan.CalculateBartlettSphericity(m)
 
-	fmt.Println(kmoItems, kmoTotal, err)
+	fmt.Println(s, p)
 }

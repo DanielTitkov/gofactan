@@ -5,7 +5,22 @@ import (
 	"math"
 
 	"gonum.org/v1/gonum/mat"
+	"gonum.org/v1/gonum/stat/distuv"
 )
+
+func CalculateBartlettSphericity(x *mat.Dense) (statistic, pvalue float64) {
+	r, c := x.Dims()
+	n := float64(r)
+	p := float64(c)
+	xCorr := CorrMartix(x)
+
+	logDet, _ := mat.LogDet(xCorr)
+	statistic = -logDet * (n - 1 - (2*p+5)/6)
+	degOfFreedom := p * (p - 1) / 2
+	pvalue = distuv.ChiSquared{K: degOfFreedom, Src: nil}.Survival(statistic)
+
+	return statistic, pvalue
+}
 
 func CalculateKMO(x *mat.Dense) (kmoPerVariable *mat.VecDense, kmoTotal float64, err error) {
 

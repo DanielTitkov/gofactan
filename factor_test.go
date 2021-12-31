@@ -7,6 +7,25 @@ import (
 	"gonum.org/v1/gonum/mat"
 )
 
+func TestCalculateBartlettSphericity(t *testing.T) {
+	data, err := CSVToMatrix("test/data/test01.csv", true)
+	if err != nil {
+		t.Errorf("failed to read data: %s", err)
+	}
+
+	expS := 14185.002857
+	expP := 0.0
+
+	s, p := CalculateBartlettSphericity(data)
+	s = roundToPlace(s, 6)
+	if s != expS {
+		t.Errorf("expected statistic of %f but got %f", expS, s)
+	}
+	if p != expP {
+		t.Errorf("expected p-value of %f but got %f", expP, p)
+	}
+}
+
 func TestCalculateKMO(t *testing.T) {
 	data, err := CSVToMatrix("test/data/test02.csv", true)
 	if err != nil {
