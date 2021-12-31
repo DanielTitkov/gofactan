@@ -150,7 +150,7 @@ func roundToPlace(v float64, n int) float64 {
 	return math.Round(v*buf) / buf
 }
 
-func axisSum(m mat.Matrix, axis string) []float64 {
+func axisSum(m mat.Matrix, axis string) mat.Vector {
 	var dim int
 	r, c := m.Dims()
 	switch axis {
@@ -173,7 +173,7 @@ func axisSum(m mat.Matrix, axis string) []float64 {
 		}
 	}
 
-	return sums
+	return mat.NewVecDense(len(sums), sums)
 }
 
 func matrixSum(m mat.Matrix) float64 {
@@ -186,4 +186,13 @@ func matrixSum(m mat.Matrix) float64 {
 	}
 
 	return sum
+}
+
+func applyToVector(fn func(i int, v float64) float64, vec *mat.VecDense) {
+	c := vec.Len()
+	for i := 0; i < c; i++ {
+		val := vec.AtVec(i)
+		newVal := fn(i, val)
+		vec.SetVec(i, newVal)
+	}
 }

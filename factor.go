@@ -7,7 +7,7 @@ import (
 	"gonum.org/v1/gonum/mat"
 )
 
-func CalculateKMO(x *mat.Dense) (kmoPerVariable []float64, kmoTotal float64, err error) {
+func CalculateKMO(x *mat.Dense) (kmoPerVariable *mat.VecDense, kmoTotal float64, err error) {
 
 	// pair-wise correlations
 	xCorr := CorrMartix(x)
@@ -24,24 +24,20 @@ func CalculateKMO(x *mat.Dense) (kmoPerVariable []float64, kmoTotal float64, err
 	xCorr.Apply(func(i, j int, v float64) float64 { return math.Pow(v, 2) }, xCorr)
 	partCorr.Apply(func(i, j int, v float64) float64 { return math.Pow(v, 2) }, partCorr)
 
-	corrSums := axisSum(xCorr, "rows")
-	partSums := axisSum(partCorr, "rows")
+	// calculate KMO per variable
+	corrSumsVec := axisSum(xCorr, "rows")
+	partSumsVec := axisSum(partCorr, "rows")
 
-	// TODO: maybe use vectors in sums calculation
-	corrSumsVec := mat.NewVecDense(len(corrSums), corrSums)
-	partSumsVec := mat.NewVecDense(len(partSums), partSums)
-
-	div, varKMOVec := &mat.VecDense{}, &mat.VecDense{}
+	div, kmoPerVariable := &mat.VecDense{}, &mat.VecDense{}
 	div.AddVec(corrSumsVec, partSumsVec)
-	varKMOVec.DivElemVec(corrSumsVec, div)
-
-	fmt.Println(partSums)
-	fmt.Println(corrSums)
-	fmt.Println(varKMOVec)
+	kmoPerVariable.DivElemVec(corrSumsVec, div)
 
 	// calculate overall KMO
-	// corrSumsTotal := axisSum(xCorr, "cols")
-	// partSumsTotal := axisSum(partCorr, "cols")
+	corrSumTotal := matrixSum(xCorr)
+	partSumTotal := matrixSum(partCorr)
+	kmoTotal = corrSumTotal / (corrSumTotal + partSumTotal)
 
-	return nil, 0, nil
+	fmt.Println(kmoTotal)
+
+	return kmoPerVariable, kmoTotal, nil
 }

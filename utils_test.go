@@ -157,19 +157,19 @@ func TestAxisSum(t *testing.T) {
 		1, 2, 1, 2,
 	})
 
-	expRowsSum := []float64{10, 14, 6}
+	expRowsSum := mat.NewVecDense(3, []float64{10, 14, 6})
 	rowsSum := axisSum(data, "rows")
-	if len(rowsSum) != len(expRowsSum) {
-		t.Errorf("expected result of len %d, got %d", len(expRowsSum), len(rowsSum))
+	if rowsSum.Len() != expRowsSum.Len() {
+		t.Errorf("expected result of len %d, got %d", expRowsSum.Len(), rowsSum.Len())
 	}
 	if !reflect.DeepEqual(expRowsSum, rowsSum) {
 		t.Errorf("expected %v, but got %v", expRowsSum, rowsSum)
 	}
 
-	expColsSum := []float64{7, 8, 7, 8}
+	expColsSum := mat.NewVecDense(4, []float64{7, 8, 7, 8})
 	colsSum := axisSum(data, "cols")
-	if len(colsSum) != len(expColsSum) {
-		t.Errorf("expected get result on len %d, got %d", len(expColsSum), len(colsSum))
+	if colsSum.Len() != expColsSum.Len() {
+		t.Errorf("expected get result on len %d, got %d", expColsSum.Len(), colsSum.Len())
 	}
 	if !reflect.DeepEqual(expColsSum, colsSum) {
 		t.Errorf("expected %v, but got %v", expColsSum, colsSum)
@@ -185,5 +185,15 @@ func TestMatrixSum(t *testing.T) {
 	exp := 18.0
 	if res := matrixSum(data); res != exp {
 		t.Errorf("expected %f, but got %f", exp, res)
+	}
+}
+
+func TestApplyToVector(t *testing.T) {
+	vec := mat.NewVecDense(3, []float64{1, 2, 3})
+	exp := mat.NewVecDense(3, []float64{0.5, 1, 1.5})
+
+	applyToVector(func(i int, v float64) float64 { return v / 2 }, vec)
+	if !reflect.DeepEqual(exp, vec) {
+		t.Errorf("expected %v but got %v", exp, vec)
 	}
 }
