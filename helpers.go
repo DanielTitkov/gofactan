@@ -16,9 +16,6 @@ func CSVToMatrix(path string, dropHeader bool) (*mat.Dense, error) {
 	}
 	defer f.Close()
 
-	var rows, cols int
-	var data []float64
-
 	lines, err := csv.NewReader(f).ReadAll()
 	if err != nil {
 		return nil, err
@@ -28,8 +25,11 @@ func CSVToMatrix(path string, dropHeader bool) (*mat.Dense, error) {
 	}
 
 	if dropHeader {
-		lines = lines[1:] // drop header
+		lines = lines[1:]
 	}
+
+	var rows, cols int
+	var data []float64
 
 	rows = len(lines)
 
@@ -45,7 +45,5 @@ func CSVToMatrix(path string, dropHeader bool) (*mat.Dense, error) {
 		}
 	}
 
-	m := mat.NewDense(rows, cols, data)
-
-	return m, nil
+	return mat.NewDense(rows, cols, data), nil
 }

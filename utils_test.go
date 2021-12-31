@@ -149,3 +149,41 @@ func TestRoundToPlace(t *testing.T) {
 		}
 	}
 }
+
+func TestAxisSum(t *testing.T) {
+	data := mat.NewDense(3, 4, []float64{
+		1, 2, 3, 4,
+		5, 4, 3, 2,
+		1, 2, 1, 2,
+	})
+
+	expRowsSum := []float64{10, 14, 6}
+	rowsSum := axisSum(data, "rows")
+	if len(rowsSum) != len(expRowsSum) {
+		t.Errorf("expected result of len %d, got %d", len(expRowsSum), len(rowsSum))
+	}
+	if !reflect.DeepEqual(expRowsSum, rowsSum) {
+		t.Errorf("expected %v, but got %v", expRowsSum, rowsSum)
+	}
+
+	expColsSum := []float64{7, 8, 7, 8}
+	colsSum := axisSum(data, "cols")
+	if len(colsSum) != len(expColsSum) {
+		t.Errorf("expected get result on len %d, got %d", len(expColsSum), len(colsSum))
+	}
+	if !reflect.DeepEqual(expColsSum, colsSum) {
+		t.Errorf("expected %v, but got %v", expColsSum, colsSum)
+	}
+}
+
+func TestMatrixSum(t *testing.T) {
+	data := mat.NewDense(2, 3, []float64{
+		1, 2, 3,
+		5, 4, 3,
+	})
+
+	exp := 18.0
+	if res := matrixSum(data); res != exp {
+		t.Errorf("expected %f, but got %f", exp, res)
+	}
+}

@@ -149,3 +149,41 @@ func roundToPlace(v float64, n int) float64 {
 	buf := math.Pow10(n)
 	return math.Round(v*buf) / buf
 }
+
+func axisSum(m mat.Matrix, axis string) []float64 {
+	var dim int
+	r, c := m.Dims()
+	switch axis {
+	case "rows":
+		dim = r
+	case "cols":
+		dim = c
+	default:
+		panic(errors.New("unknown axis, must be rows or cols"))
+	}
+	sums := make([]float64, dim)
+	for i := 0; i < r; i++ {
+		for j := 0; j < c; j++ {
+			switch axis {
+			case "rows":
+				sums[i] += m.At(i, j)
+			case "cols":
+				sums[j] += m.At(i, j)
+			}
+		}
+	}
+
+	return sums
+}
+
+func matrixSum(m mat.Matrix) float64 {
+	r, c := m.Dims()
+	var sum float64
+	for i := 0; i < r; i++ {
+		for j := 0; j < c; j++ {
+			sum += m.At(i, j)
+		}
+	}
+
+	return sum
+}

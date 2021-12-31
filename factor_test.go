@@ -17,7 +17,7 @@ func TestCalculateKMO(t *testing.T) {
 		0.839272}
 	expectedTotal := 0.81498469767761361
 
-	kmoItems, kmoTotal, err := calculateKMO(data)
+	kmoItems, kmoTotal, err := CalculateKMO(data)
 	if err != nil {
 		t.Errorf("failed to calculate KMO: %s", err)
 	}
