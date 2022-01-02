@@ -1,58 +1,25 @@
 package gofactan
 
 import (
-	"fmt"
-	"math"
-
 	"gonum.org/v1/gonum/mat"
-	"gonum.org/v1/gonum/stat/distuv"
 )
 
-func CalculateBartlettSphericity(x *mat.Dense) (statistic, pvalue float64) {
-	r, c := x.Dims()
-	n := float64(r)
-	p := float64(c)
-	xCorr := CorrMartix(x)
-
-	logDet, _ := mat.LogDet(xCorr)
-	statistic = -logDet * (n - 1 - (2*p+5)/6)
-	degOfFreedom := p * (p - 1) / 2
-	pvalue = distuv.ChiSquared{K: degOfFreedom, Src: nil}.Survival(statistic)
-
-	return statistic, pvalue
+type Factor struct {
+	Cfg FactorConfig
 }
 
-func CalculateKMO(x *mat.Dense) (kmoPerVariable *mat.VecDense, kmoTotal float64, err error) {
+type FactorConfig struct {
+	NFactors     int
+	Rotation     string
+	Method       string
+	UseSMC       bool
+	IsCorrMatrix bool
+}
 
-	// pair-wise correlations
-	xCorr := CorrMartix(x)
-	partCorr, err := PartialCorr(x)
-	if err != nil {
-		return nil, 0, err
-	}
+func NewFactor() *Factor {
 
-	// fill matrix diagonals with zeros
-	fillDiag(xCorr, 0)
-	fillDiag(partCorr, 0)
+}
 
-	// square all elements
-	xCorr.Apply(func(i, j int, v float64) float64 { return math.Pow(v, 2) }, xCorr)
-	partCorr.Apply(func(i, j int, v float64) float64 { return math.Pow(v, 2) }, partCorr)
-
-	// calculate KMO per variable
-	corrSumsVec := axisSum(xCorr, "rows")
-	partSumsVec := axisSum(partCorr, "rows")
-
-	div, kmoPerVariable := &mat.VecDense{}, &mat.VecDense{}
-	div.AddVec(corrSumsVec, partSumsVec)
-	kmoPerVariable.DivElemVec(corrSumsVec, div)
-
-	// calculate overall KMO
-	corrSumTotal := matrixSum(xCorr)
-	partSumTotal := matrixSum(partCorr)
-	kmoTotal = corrSumTotal / (corrSumTotal + partSumTotal)
-
-	fmt.Println(kmoTotal)
-
-	return kmoPerVariable, kmoTotal, nil
+func (f *Factor) Fit(x mat.Matrix) error {
+	return nil
 }
